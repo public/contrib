@@ -13,7 +13,9 @@ case $1 in
     exit 0;;
 esac
 
-END_TIME=$(date +%H:%M:00 --date="5 minutes ago") 
+test -z $LAST_N_SECONDS && LAST_N_SECONDS=300
+
+END_TIME=$(date +%H:%M:00 --date="$LAST_N_SECONDS seconds ago") 
 END_TIME="13:05:00"
 for LOG_FILE in $LOG_FILES
 do
