@@ -1,0 +1,26 @@
+#!/bin/sh
+
+
+LOG_FILES=$(find /var/log/apache* -name access.log -type f)
+
+case $1 in
+    config)
+    echo graph_title "Page generation time"
+    echo graph_vlabel "Microseconds"
+    echo graph_category "Apache"
+    echo mean.label "Mean"
+    echo stddev.label "Standard Deviation"
+    exit 0;;
+esac
+
+END_TIME=$(date +%H:%M:00 --date="5 minutes ago") 
+END_TIME="13:05:00"
+for LOG_FILE in $LOG_FILES
+do
+    tac $LOG_FILE | \
+           # extract the H:M:S timestamp from the log file
+           sed -n 's/^.*\([0-9]\{2\}:[0-9]\{2\}:[0-9]\{2\}\) .*$/\1 &/p' | \
+           # compute mean page time until the timestamp
+           awk '{if(END_TIME < $1){sum += $NF ; sumsq += $NF^2} else exit} \
+                END {printf "mean.value %d\nstddev.value %d\n", sum/NR, sqrt(sumsq/NR - (sum/NR)^2)}' END_TIME=$END_TIME
+done
