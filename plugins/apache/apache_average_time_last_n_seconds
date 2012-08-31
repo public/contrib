@@ -11,8 +11,8 @@ case $1 in
     exit 0;;
 esac
 
-test -z $LAST_N_SECONDS && LAST_N_SECONDS=300
-test -z $LOG_FILE && LOG_FILE=/var/log/apache2/access.log
+test -z "$LAST_N_SECONDS" && LAST_N_SECONDS=300
+test -z "$LOG_FILE" && LOG_FILE="/var/log/apache2/access.log /var/log/apache2/access.log.1"
 
 END_TIME=$(date +%H:%M:S --date="$LAST_N_SECONDS seconds ago") 
 
